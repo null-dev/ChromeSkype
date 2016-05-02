@@ -1,0 +1,17 @@
+{
+  "name": "Skype",
+  "description": "Native looking Skype on Chrome.",
+  "version": "1.0",
+  "manifest_version": 2,
+  "app": {
+    "background": {
+      "scripts": ["background.js"]
+    }
+  },
+  "permissions": [
+    "webview",
+    "notifications",
+    "background"
+  ],
+  "icons": { "16": "icon-16.png", "128": "icon-128.png" }
+}
