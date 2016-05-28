@@ -3,6 +3,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 var openWindow;
+var windowShowing = false;
+var WINDOW_REFRESH_INTERVAL = 900000;
 
 function createNewWindow(show) {
 	if(openWindow !== undefined) {
@@ -19,6 +21,7 @@ function createNewWindow(show) {
 		if(openWindow !== undefined) {
 			window.close()
 		} else {
+			windowShowing = show;
             openWindow = window;
             window.onClosed.addListener(function() {
                 createNewWindow(false);
@@ -34,8 +37,20 @@ function showWindow() {
         createNewWindow(true);
     } else {
         openWindow.show();
+        windowShowing = true;
     }
 }
+
+//Required because sometimes when Skype starts when network is disconnected, it will never work again until it is completely restarted
+function refreshSkypeWindow() {
+	//Only do this if the window was never open (currently in the background)
+	if(!windowShowing) {
+		createNewWindow(false);
+	}
+	setTimeout(refreshSkypeWindow, WINDOW_REFRESH_INTERVAL);
+}
+//We don't want to do this right away so use chained setTimeouts
+setTimeout(refreshSkypeWindow, WINDOW_REFRESH_INTERVAL);
 
 chrome.app.runtime.onLaunched.addListener(function() {
     showWindow();
