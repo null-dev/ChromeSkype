@@ -1,7 +1,8 @@
 console.log("[CS] Script injected!");
 
+var eventSource;
 window.addEventListener("message", function(event) {
-    console.log("[CS] Message count requested!");
+    eventSource = event.source;
     var notifications = document.getElementsByClassName("counter");
     found = 0;
     for (i = 0; i < notifications.length; i++) {
@@ -11,7 +12,6 @@ window.addEventListener("message", function(event) {
         }
         found += parseInt(currentNode.innerHTML);
     }
-    console.log("[CS] Found " + found + " messages!");
     try {
         event.source.postMessage(found, "*");
     } catch (error) {
@@ -23,3 +23,61 @@ window.addEventListener("message", function(event) {
 		msLink.click();
 	}
 }, false);
+
+//Watches the document until Skype is loaded
+var skypeShellElement = document.getElementById("shellSplashScreen");
+var documentObserver = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (!mutation.addedNodes) return
+
+    for (var i = 0; i < mutation.removedNodes.length; i++) {
+      var node = mutation.removedNodes[i];
+      if(node === skypeShellElement) {
+		  documentObserver.disconnect();
+		  console.log("[CS] Loading complete!");
+		  onLoadedEvent = new CustomEvent("SkypeLoaded");
+		  document.dispatchEvent(onLoadedEvent);
+		  break;
+	  }
+    }
+  })
+})
+documentObserver.observe(document.body, {
+    childList: true
+  , subtree: true
+  , attributes: false
+  , characterData: false
+})
+
+var chromeSkypeLinkId = "chromeSkypeLink";
+var rightFooterContent = '<p class="smaller"><a id="' + chromeSkypeLinkId + '">ChromeSkype</a></p><p class="smaller">&nbsp;·&nbsp;</p><p class="smaller"><span class="noShort noNarrow">© 2016 Skype and/or Microsoft.</span><span class="noMedium noWide">© 2016 Skype/Microsoft.</span></p>';
+//Remove unusable links and text at bottom of screen (and append ChromeSkype info)
+function removeFooterElements() {
+	leftFooter = document.querySelector(".app");
+	if(leftFooter !== undefined) {
+		toRemove = document.querySelectorAll(".app > .smaller");
+		for (i = 0; i < toRemove.length; i++) {
+			leftFooter.removeChild(toRemove[i]);
+        }
+	}
+	wholeFooter = document.getElementById("footer");
+	if(wholeFooter !== undefined) {
+		wholeFooter.style["padding-left"] = "0.75em";
+	}
+	rightFooter = document.querySelector(".legal");
+	if(rightFooter !== undefined) {
+		rightFooter.innerHTML = rightFooterContent;
+		document.getElementById(chromeSkypeLinkId).addEventListener('click', function() {
+			openChromeSkypeRepo();
+		});
+	}
+}
+
+function openChromeSkypeRepo() {
+	eventSource.postMessage("OPEN_CHROMESKYPE_REPO_LINK", "*");
+}
+
+document.addEventListener("SkypeLoaded", function(e) {
+	console.log("[CS] Processing page footer...");
+	removeFooterElements();
+});
