@@ -12,7 +12,8 @@
     "webview",
     "notifications",
     "background",
-    "browser"
+    "browser",
+    "*://api.skype.com/*"
   ],
   "icons": { "16": "icon-16.png", "128": "icon-128.png" }
 }

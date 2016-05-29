@@ -13,7 +13,7 @@ window.addEventListener("message", function(event) {
         found += parseInt(currentNode.innerHTML);
     }
     try {
-        event.source.postMessage(found, "*");
+        event.source.postMessage({cmd: "MESSAGE_COUNT", notificationCount: found}, "*");
     } catch (error) {
         console.log("[CS] Error sending response! Error: " + error);
     }
@@ -74,10 +74,14 @@ function removeFooterElements() {
 }
 
 function openChromeSkypeRepo() {
-	eventSource.postMessage("OPEN_CHROMESKYPE_REPO_LINK", "*");
+	eventSource.postMessage({cmd: "OPEN_CHROMESKYPE_REPO_LINK"}, "*");
 }
 
 document.addEventListener("SkypeLoaded", function(e) {
 	console.log("[CS] Processing page footer...");
 	removeFooterElements();
+});
+
+document.addEventListener("SkypeNotification", function(e) {
+	eventSource.postMessage({cmd: "SEND_NOTIFICATION", notification: e.detail}, "*");
 });

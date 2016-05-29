@@ -2,14 +2,22 @@ var webview = document.querySelector("webview");
 
 var messageHandler = function(event) {
 	//Intercept event if it is asking us to open the ChromeSkype repo link!
-	if(event.data === "OPEN_CHROMESKYPE_REPO_LINK") {
+	if(event.data.cmd === "OPEN_CHROMESKYPE_REPO_LINK") {
 		console.log("WINDOW OK!");
 		window.open('https://github.com/null-dev/ChromeSkype');
 		return;
+	} else if(event.data.cmd === "SEND_NOTIFICATION") {
+		//Forward to background page
+		chrome.runtime.sendMessage({cmd: "SEND_NOTIFICATION", notification: event.data.notification});
+	} else if(event.data.cmd === "MESSAGE_COUNT") {
+		//Notify background page
+		var notificationCount = event.data.notificationCount;
+		if(notificationCount === NaN) {
+			notificationCount = 0;
+		}
+		document.title = "Skype - " + notificationCount + " New Messages";
+		chrome.runtime.sendMessage({cmd: "MESSAGE_COUNT", notificationCount: notificationCount});
 	}
-    var notificationCount = event.data;
-    document.title = "Skype - " + notificationCount + " New Messages";
-    chrome.runtime.sendMessage({notificationCount: notificationCount});
 };
 
 var loaded = false;
@@ -34,6 +42,14 @@ webview.addEventListener("loadcommit", function() {
             files: [ "content.js" ]
         },
         run_at: "document_end"
+    } ]);
+    webview.addContentScripts([ {
+        name: "notification_interceptor",
+        matches: [ "http://web.skype.com/*", "https://web.skype.com/*" , "https://login.skype.com/*", "http://login.skype.com/*"],
+        js: {
+            files: [ "content_start.js" ]
+        },
+        run_at: "document_start"
     } ]);
     window.addEventListener("message", messageHandler, false);
     //Skype calls newwindow five (or more) times every one click (and I have no idea why)

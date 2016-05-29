@@ -1,12 +1,22 @@
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    notify(request.notificationCount);
+	if(request.cmd === "MESSAGE_COUNT") {
+		//Prevent notifications when Skype's built-in notifications already include them
+		if(enableNotifications) {
+			notify(request.notificationCount);
+		}
+		enableNotifications = false;
+	} else if(request.cmd === "SEND_NOTIFICATION") {
+		notifyFull(request.notification);
+	}
 });
 
+var enableNotifications = true;
 var openWindow;
 var windowShowing = false;
 var WINDOW_REFRESH_INTERVAL = 900000;
 
 function createNewWindow(show) {
+	enableNotifications = true;
 	if(openWindow !== undefined) {
 		openWindow.close();
 		openWindow = undefined;
@@ -33,6 +43,13 @@ function createNewWindow(show) {
 createNewWindow(false);
 
 function showWindow() {
+	//Clear all notifications
+	chrome.notifications.getAll(function(all){
+		var keys = Object.keys(all);
+		for(var i = 0; i < keys.length; i++) {
+			chrome.notifications.clear(keys[i]);
+		}
+	});
     if (openWindow === undefined) {
         createNewWindow(true);
     } else {
@@ -64,7 +81,32 @@ var lastNotificationCount = 0;
 
 var notificationId = "nc";
 
+function notifyFull(notification) {
+	if(windowShowing) {
+		return;
+	}
+    var xhr = new XMLHttpRequest();
+    var parsed = new URL(notification.icon);
+    var profileName = parsed.pathname.split('/')[2];
+	xhr.open("GET", "https://api.skype.com/users/" + profileName + "/profile/avatar?returnDefaultImage=true");
+	xhr.responseType = "blob";
+	xhr.onload = function(){
+		var blob = this.response;
+		var iconUrl = window.URL.createObjectURL(blob);
+		chrome.notifications.create(notification.title, {
+			type: "basic",
+        	title: notification.title,
+        	message: notification.body,
+        	iconUrl: iconUrl
+        });
+	};
+	xhr.send(null);
+}
+
 function notify(notificationCount) {
+	if(windowShowing) {
+		return;
+	}
     var title = "Skype - " + notificationCount + " New";
     if (notificationCount > lastNotificationCount) {
         if (notificationCount == 0) {
