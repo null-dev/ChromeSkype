@@ -65,11 +65,10 @@ var rightFooterContent = `
 		<a id="` + chromeSkypeGithubLinkId2 + `">Github</a>
 	</p>
 	<p class="smaller">·</p>
-	<!-- Temporarily invisible while I wait for web store upload to finish -->
-	<p class="smaller" style="display: none">
+	<p class="smaller">
 		<a id="` + chromeSkypeWebStoreLinkId + `">Chrome Web Store</a>
 	</p>
-	<p class="smaller" style="display: none">·</p>
+	<p class="smaller">·</p>
 </span>
 <p class="smaller">
 	<span class="noShort noNarrow">© 2016 Skype and/or Microsoft.</span>

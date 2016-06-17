@@ -6,7 +6,7 @@ var messageHandler = function(event) {
 		window.open('https://github.com/null-dev/ChromeSkype');
 		return;
 	} else if(event.data.cmd === "OPEN_CHROMESKYPE_WEBSTORE_LINK") {
-		window.open('https://github.com/null-dev/ChromeSkype/blob/master/LICENSE');
+		window.open('https://chrome.google.com/webstore/detail/chromeskype/oghlgehncgibpgmdcblhkbgggeflacnd');
 		return;
 	} else if(event.data.cmd === "SEND_NOTIFICATION") {
 		//Forward to background page
