@@ -3,8 +3,10 @@ var webview = document.querySelector("webview");
 var messageHandler = function(event) {
 	//Intercept event if it is asking us to open the ChromeSkype repo link!
 	if(event.data.cmd === "OPEN_CHROMESKYPE_REPO_LINK") {
-		console.log("WINDOW OK!");
 		window.open('https://github.com/null-dev/ChromeSkype');
+		return;
+	} else if(event.data.cmd === "OPEN_CHROMESKYPE_WEBSTORE_LINK") {
+		window.open('https://github.com/null-dev/ChromeSkype/blob/master/LICENSE');
 		return;
 	} else if(event.data.cmd === "SEND_NOTIFICATION") {
 		//Forward to background page

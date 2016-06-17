@@ -13,6 +13,7 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 var enableNotifications = true;
 var openWindow;
 var windowShowing = false;
+var windowMinimized = false;
 var WINDOW_REFRESH_INTERVAL = 900000;
 
 function createNewWindow(show) {
@@ -33,9 +34,20 @@ function createNewWindow(show) {
 		} else {
 			windowShowing = show;
             openWindow = window;
+            windowMinimized = false;
             window.onClosed.addListener(function() {
+				windowMinimized = false;
                 createNewWindow(false);
             });
+            //Minimize and restore listeners
+            window.onMinimized.addListener(function() {
+				windowMinimized = true;
+				windowShowing = false;
+			});
+			window.onRestored.addListener(function() {
+				windowMinimized = false;
+				windowShowing = true;
+			});
 	    }
     });
 }
@@ -55,13 +67,14 @@ function showWindow() {
     } else {
         openWindow.show();
         windowShowing = true;
+        windowMinimized = false;
     }
 }
 
 //Required because sometimes when Skype starts when network is disconnected, it will never work again until it is completely restarted
 function refreshSkypeWindow() {
 	//Only do this if the window was never open (currently in the background)
-	if(!windowShowing) {
+	if(!windowShowing && !windowMinimized) {
 		createNewWindow(false);
 	}
 	setTimeout(refreshSkypeWindow, WINDOW_REFRESH_INTERVAL);
@@ -82,9 +95,6 @@ var lastNotificationCount = 0;
 var notificationId = "nc";
 
 function notifyFull(notification) {
-	if(windowShowing) {
-		return;
-	}
     var xhr = new XMLHttpRequest();
     var parsed = new URL(notification.icon);
     var profileName = parsed.pathname.split('/')[2];
@@ -98,6 +108,14 @@ function notifyFull(notification) {
         	title: notification.title,
         	message: notification.body,
         	iconUrl: iconUrl
+        });
+	};
+	xhr.onerror = function(){
+		chrome.notifications.create(notification.title, {
+			type: "basic",
+        	title: notification.title,
+        	message: notification.body,
+        	iconUrl: "icon.png"
         });
 	};
 	xhr.send(null);

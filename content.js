@@ -49,8 +49,32 @@ documentObserver.observe(document.body, {
   , characterData: false
 })
 
-var chromeSkypeLinkId = "chromeSkypeLink";
-var rightFooterContent = '<p class="smaller"><a id="' + chromeSkypeLinkId + '">ChromeSkype</a></p><p class="smaller">&nbsp;·&nbsp;</p><p class="smaller"><span class="noShort noNarrow">© 2016 Skype and/or Microsoft.</span><span class="noMedium noWide">© 2016 Skype/Microsoft.</span></p>';
+var chromeSkypeGithubLinkId = "chromeSkypeGithubLink";
+var chromeSkypeGithubLinkId2 = "chromeSkypeGithubLink2";
+var chromeSkypeWebStoreLinkId = "chromeSkypeWebStoreLink";
+var rightFooterContent = `
+<p class="smaller">
+	<!-- Single link for narrow layouts -->
+	<span class="noShort noNarrow">ChromeSkype</span>
+	<span class="noMedium noWide"><a id="` + chromeSkypeGithubLinkId + `">ChromeSkype</a></span>
+</p>
+<p class="smaller">·</p>
+<!-- Long links for wide layouts-->
+<span class="noShort noNarrow">
+	<p class="smaller">
+		<a id="` + chromeSkypeGithubLinkId2 + `">Github</a>
+	</p>
+	<p class="smaller">·</p>
+	<!-- Temporarily invisible while I wait for web store upload to finish -->
+	<p class="smaller" style="display: none">
+		<a id="` + chromeSkypeWebStoreLinkId + `">Chrome Web Store</a>
+	</p>
+	<p class="smaller" style="display: none">·</p>
+</span>
+<p class="smaller">
+	<span class="noShort noNarrow">© 2016 Skype and/or Microsoft.</span>
+	<span class="noMedium noWide">© 2016 Skype/Microsoft.</span>
+</p>`;
 //Remove unusable links and text at bottom of screen (and append ChromeSkype info)
 function removeFooterElements() {
 	leftFooter = document.querySelector(".app");
@@ -67,14 +91,25 @@ function removeFooterElements() {
 	rightFooter = document.querySelector(".legal");
 	if(rightFooter !== undefined) {
 		rightFooter.innerHTML = rightFooterContent;
-		document.getElementById(chromeSkypeLinkId).addEventListener('click', function() {
+		//Hook links
+		document.getElementById(chromeSkypeGithubLinkId).addEventListener('click', function() {
 			openChromeSkypeRepo();
+		});
+		document.getElementById(chromeSkypeGithubLinkId2).addEventListener('click', function() {
+			openChromeSkypeRepo();
+		});
+		document.getElementById(chromeSkypeWebStoreLinkId).addEventListener('click', function() {
+			openChromeSkypeWebStore();
 		});
 	}
 }
 
+//Link open command senders
 function openChromeSkypeRepo() {
 	eventSource.postMessage({cmd: "OPEN_CHROMESKYPE_REPO_LINK"}, "*");
+}
+function openChromeSkypeWebStore() {
+	eventSource.postMessage({cmd: "OPEN_CHROMESKYPE_WEBSTORE_LINK"}, "*");
 }
 
 document.addEventListener("SkypeLoaded", function(e) {
