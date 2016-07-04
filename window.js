@@ -65,3 +65,7 @@ webview.addEventListener("loadcommit", function() {
 		e.preventDefault();
 	});
 });
+//Webview should allow all permission requests
+webview.addEventListener('permissionrequest', function(e) {
+	e.request.allow();
+});
