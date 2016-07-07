@@ -33,13 +33,13 @@ chrome.notifications.onClosed.addListener(function(notificationId, byUser) {
 });
 
 chrome.notifications.onButtonClicked.addListener(function(notificationId, buttonIndex) {
-	showWindow();
 	if(notificationId.startsWith("call")) {
 		if(buttonIndex === 0) {
 			acceptAudioCall();
 		} else if(buttonIndex === 1) {
 			acceptVideoCall();
 		}
+		showWindow();
 	}
 });
 
