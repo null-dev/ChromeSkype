@@ -20,7 +20,13 @@ window.addEventListener("message", function(event) {
     //Also try to login using Microsoft Account automatically
     var msLink = document.getElementById("signInMSALink");
     if(msLink !== undefined && msLink !== null) {
-		msLink.click();
+		//Don't click on it when it is not visible
+		var msWrapper = document.getElementById("signInMSA");
+		if(msWrapper !== undefined && msWrapper !== null && msWrapper.style !== undefined && msWrapper.style !== null && msWrapper.style.display === "none") {
+			console.log("[CS] Ignoring Microsoft Sign In Link!");
+		} else {
+			msLink.click();
+		}
 	}
 }, false);
 
