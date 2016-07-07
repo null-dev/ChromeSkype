@@ -7,6 +7,8 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 		enableNotifications = false;
 	} else if(request.cmd === "SEND_NOTIFICATION") {
 		notifyFull(request.notification);
+	} else if(request.cmd === "SHOW_WINDOW") {
+		showWindow();
 	}
 });
 
@@ -86,7 +88,7 @@ chrome.app.runtime.onLaunched.addListener(function() {
     showWindow();
 });
 
-chrome.notifications.onClicked.addListener(function(){
+chrome.notifications.onClicked.addListener(function() {
 	showWindow();
 });
 
@@ -94,27 +96,37 @@ var lastNotificationCount = 0;
 
 var notificationId = "nc";
 
+//All buttons should be tinted: #BFBFBF
 function notifyFull(notification) {
     var xhr = new XMLHttpRequest();
     var parsed = new URL(notification.icon);
     var profileName = parsed.pathname.split('/')[2];
+    var notificationId = notification.title;
     var notificationOptions = {
-			type: "basic",
-        	title: notification.title,
-        	message: notification.body,
-        	contextMessage: "Skype, " + formatAMPM(new Date());
-        };
+		type: "basic",
+        title: notification.title,
+        message: notification.body,
+        isClickable: true,
+        contextMessage: "Skype, " + formatAMPM(new Date())
+    };
+    //Custom notification for calls
+    if(notification.tag !== undefined && notification.tag !== null && notification.tag.startsWith("newCall")) {
+		notificationOptions.title = "Incoming Call";
+		notificationOptions.message = "Incoming call from: " + notification.title + ". Dismiss this notification to reject the call.";
+		notificationOptions.buttons = [{ title: "Accept Voice Call", iconUrl: "icon/accept-voice.svg"}, { title: "Accept Video Call", iconUrl: "icon/accept-video.svg"}];
+		notificationId = "call_" + notification.title;
+	}
 	xhr.open("GET", "https://api.skype.com/users/" + profileName + "/profile/avatar?returnDefaultImage=true");
 	xhr.responseType = "blob";
 	xhr.onload = function(){
 		var blob = this.response;
 		var iconUrl = window.URL.createObjectURL(blob);
 		notificationOptions.iconUrl = iconUrl;
-		chrome.notifications.create(notification.title, notificationOptions);
+		chrome.notifications.create(notificationId, notificationOptions);
 	};
 	xhr.onerror = function(){
 		notificationOptions.iconUrl = "icon.png";
-		chrome.notifications.create(notification.title, notificationOptions);
+		chrome.notifications.create(notificationId, notificationOptions);
 	};
 	xhr.send(null);
 }

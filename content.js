@@ -3,7 +3,43 @@ console.log("[CS] Script injected!");
 var eventSource;
 window.addEventListener("message", function(event) {
     eventSource = event.source;
-    var notifications = document.getElementsByClassName("counter");
+    if(event.data === "REQUEST_MESSAGE_COUNT") {
+		respondMessageCount(event);
+	} else if(event.data === "ACCEPT_AUDIO_CALL") {
+		changeCallState("acceptWithAudio");
+	} else if(event.data === "ACCEPT_VIDEO_CALL") {
+		changeCallState("acceptWithVideo");
+	} else if(event.data === "REJECT_CALL") {
+		changeCallState("reject");
+	}
+    //Also try to login using Microsoft Account automatically
+    var msLink = document.getElementById("signInMSALink");
+    if(msLink !== undefined && msLink !== null) {
+		//Don't click on it when it is not visible
+		var msWrapper = document.getElementById("signInMSA");
+		if(msWrapper !== undefined && msWrapper !== null && msWrapper.style !== undefined && msWrapper.style !== null && msWrapper.style.display === "none") {
+			console.log("[CS] Ignoring Microsoft Sign In Link!");
+		} else {
+			msLink.click();
+		}
+	}
+}, false);
+
+function changeCallState(action) {
+	var possibleButtons = document.getElementsByClassName("btn primary circle");
+	for(var i = 0; i < possibleButtons.length; i++) {
+		var button = possibleButtons[i];
+		var dataset = button.dataset;
+		if(dataset !== undefined && dataset !== null) {
+			if(dataset.click === action) {
+				button.click();
+			}
+		}
+	}
+}
+
+function respondMessageCount(event) {
+	var notifications = document.getElementsByClassName("counter");
     found = 0;
     for (i = 0; i < notifications.length; i++) {
         currentNode = notifications[i];
@@ -17,18 +53,7 @@ window.addEventListener("message", function(event) {
     } catch (error) {
         console.log("[CS] Error sending response! Error: " + error);
     }
-    //Also try to login using Microsoft Account automatically
-    var msLink = document.getElementById("signInMSALink");
-    if(msLink !== undefined && msLink !== null) {
-		//Don't click on it when it is not visible
-		var msWrapper = document.getElementById("signInMSA");
-		if(msWrapper !== undefined && msWrapper !== null && msWrapper.style !== undefined && msWrapper.style !== null && msWrapper.style.display === "none") {
-			console.log("[CS] Ignoring Microsoft Sign In Link!");
-		} else {
-			msLink.click();
-		}
-	}
-}, false);
+}
 
 //Watches the document until Skype is loaded
 var skypeShellElement = document.getElementById("shellSplashScreen");

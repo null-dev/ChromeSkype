@@ -22,10 +22,55 @@ var messageHandler = function(event) {
 	}
 };
 
+function showWindow() {
+	chrome.runtime.sendMessage({cmd: "SHOW_WINDOW"});
+}
+
+chrome.notifications.onClosed.addListener(function(notificationId, byUser) {
+	if(notificationId.startsWith("call") && byUser) {
+		rejectCall();
+	}
+});
+
+chrome.notifications.onButtonClicked.addListener(function(notificationId, buttonIndex) {
+	showWindow();
+	if(notificationId.startsWith("call")) {
+		if(buttonIndex === 0) {
+			acceptAudioCall();
+		} else if(buttonIndex === 1) {
+			acceptVideoCall();
+		}
+	}
+});
+
+function rejectCall() {
+	try {
+        webview.contentWindow.postMessage("REJECT_CALL", "*");
+    } catch (error) {
+        console.log("Error accepting audio call! Error: " + error);
+    }
+}
+
+function acceptAudioCall() {
+	try {
+        webview.contentWindow.postMessage("ACCEPT_AUDIO_CALL", "*");
+    } catch (error) {
+        console.log("Error accepting audio call! Error: " + error);
+    }
+}
+
+function acceptVideoCall() {
+	try {
+        webview.contentWindow.postMessage("ACCEPT_VIDEO_CALL", "*");
+    } catch (error) {
+        console.log("Error accepting video call! Error: " + error);
+    }
+}
+
 var loaded = false;
 function requestNotificationCount() {
     try {
-        webview.contentWindow.postMessage("Requesting message count...", "*");
+        webview.contentWindow.postMessage("REQUEST_MESSAGE_COUNT", "*");
     } catch (error) {
         console.log("Error requesting message count! Error: " + error);
     }
