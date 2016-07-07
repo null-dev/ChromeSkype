@@ -12,8 +12,13 @@
     "webview",
     "notifications",
     "background",
+    "fileSystem",
     "browser",
-    "*://api.skype.com/*"
+    "*://api.skype.com/*",
+    "*://web.skype.com/*",
+    "videoCapture",
+    "audioCapture",
+    "desktopCapture"
   ],
   "icons": { "16": "icon-16.png", "128": "icon-128.png" }
 }

@@ -1,7 +1,7 @@
+var appendPlace = (document.head || document.documentElement);
 var s = document.createElement("script");
 s.innerHTML = `
 /* ==========[ChromeSkype Injected Script] ========== */
-
 console.log("[CS] Starting notification interceptor...");
 	Notification.permission = "granted";
 	var oldProto = Notification.prototype;
@@ -37,5 +37,5 @@ console.log("[CS] Starting notification interceptor...");
 		document.dispatchEvent(customEvent);
 	};
 `;
-(document.head||document.documentElement).appendChild(s);
+appendPlace.appendChild(s);
 console.log("[CS] Notification interceptor script injected!");

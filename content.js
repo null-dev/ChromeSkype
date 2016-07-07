@@ -18,7 +18,7 @@ window.addEventListener("message", function(event) {
         console.log("[CS] Error sending response! Error: " + error);
     }
     //Also try to login using Microsoft Account automatically
-    msLink = document.getElementById("signInMSALink");
+    var msLink = document.getElementById("signInMSALink");
     if(msLink !== undefined && msLink !== null) {
 		msLink.click();
 	}
