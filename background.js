@@ -98,25 +98,23 @@ function notifyFull(notification) {
     var xhr = new XMLHttpRequest();
     var parsed = new URL(notification.icon);
     var profileName = parsed.pathname.split('/')[2];
+    var notificationOptions = {
+			type: "basic",
+        	title: notification.title,
+        	message: notification.body,
+        	contextMessage: "Skype, " + formatAMPM(new Date());
+        };
 	xhr.open("GET", "https://api.skype.com/users/" + profileName + "/profile/avatar?returnDefaultImage=true");
 	xhr.responseType = "blob";
 	xhr.onload = function(){
 		var blob = this.response;
 		var iconUrl = window.URL.createObjectURL(blob);
-		chrome.notifications.create(notification.title, {
-			type: "basic",
-        	title: notification.title,
-        	message: notification.body,
-        	iconUrl: iconUrl
-        });
+		notificationOptions.iconUrl = iconUrl;
+		chrome.notifications.create(notification.title, notificationOptions);
 	};
 	xhr.onerror = function(){
-		chrome.notifications.create(notification.title, {
-			type: "basic",
-        	title: notification.title,
-        	message: notification.body,
-        	iconUrl: "icon.png"
-        });
+		notificationOptions.iconUrl = "icon.png";
+		chrome.notifications.create(notification.title, notificationOptions);
 	};
 	xhr.send(null);
 }
@@ -139,4 +137,16 @@ function notify(notificationCount) {
         }
     }
     lastNotificationCount = notificationCount;
+}
+
+/** Sourced from: http://stackoverflow.com/a/8888498/5054192 **/
+function formatAMPM(date) {
+  var hours = date.getHours();
+  var minutes = date.getMinutes();
+  var ampm = hours >= 12 ? 'pm' : 'am';
+  hours = hours % 12;
+  hours = hours ? hours : 12; // the hour '0' should be '12'
+  minutes = minutes < 10 ? '0'+minutes : minutes;
+  var strTime = hours + ':' + minutes + ' ' + ampm;
+  return strTime;
 }
