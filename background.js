@@ -16,7 +16,7 @@ var enableNotifications = true;
 var openWindow;
 var windowShowing = false;
 var windowMinimized = false;
-var WINDOW_REFRESH_INTERVAL = 900000;
+var WINDOW_REFRESH_INTERVAL = 15;
 
 function createNewWindow(show) {
 	enableNotifications = true;
@@ -79,10 +79,17 @@ function refreshSkypeWindow() {
 	if(!windowShowing && !windowMinimized) {
 		createNewWindow(false);
 	}
-	setTimeout(refreshSkypeWindow, WINDOW_REFRESH_INTERVAL);
 }
-//We don't want to do this right away so use chained setTimeouts
-setTimeout(refreshSkypeWindow, WINDOW_REFRESH_INTERVAL);
+
+chrome.alarms.create("REFRESH_SKYPE_WINDOW", {
+	delayInMinutes: WINDOW_REFRESH_INTERVAL,
+	periodInMinutes: WINDOW_REFRESH_INTERVAL
+});
+chrome.alarms.onAlarm.addListener(function(alarm) {
+	if(alarm.name === "REFRESH_SKYPE_WINDOW") {
+		refershSkypeWindow();
+	}
+});
 
 chrome.app.runtime.onLaunched.addListener(function() {
     showWindow();
