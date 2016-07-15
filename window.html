@@ -2,10 +2,20 @@
 <html>
   <head>
 	  <title>Skype</title>
-	  <style>html, body {margin: 0; display: flex; height: 100%; width: 100%;}</style>
+	  <style>
+		  html, body {margin: 0; display: flex; height: 100%; width: 100%;}
+		  .webview {z-index: 50; width: 100%; height: 100%;}
+		  #popup {top: 0; right: 0; position: absolute; z-index: 500; opacity: 0; pointer-events: none; width: 100%; height: 100%; transition: all 0.5s; background-color: white;}
+		  #popup_close {font-weight: bold; font-size: 30px; position: absolute; top: -2px; right: 5px; transition: all 0.1s;}
+		  #popup_close:hover {transform: scale(1.2, 1.2); cursor: pointer;}
+	  </style>
   </head>
   <body>
-    <webview id="webview" src="http://web.skype.com/" style="width:100%; height:100%" partition="persist:cskype"></webview>
+    <webview id="webview" class="webview" src="http://web.skype.com/" partition="persist:cskype"></webview>
+    <div id="popup">
+		<div id="popup_close">X</div>
+		<webview id="pop_webview" class="webview" src="about:blank" style="position: absolute; top: 50px; left: 0; height: calc(100% - 50px)" partition="persist:cskype"></webview>
+    </div>
     <script src="window.js"></script>
   </body>
 </html>
