@@ -119,8 +119,9 @@ webview.addEventListener("loadcommit", function() {
 		console.log(e);
 		if(lastClickLink !== e.targetUrl) {
 			lastClickLink = e.targetUrl;
-			//Proper image display
-			if((lastClickLink.startsWith("https://api.asm.skype.com/") || lastClickLink.startsWith("http://api.asm.skype.com/")) && lastClickLink.endsWith("imgpsh_fullsize")) {
+			//Pretty safe Regexp to match only URLs that are images and display them: https://regex101.com/r/oM1pA4/1
+			if(new RegExp("http.{0,1}:\\/\\/[^\\/]*api\\.asm\\.skype\\.com\\/.*\\/imgpsh_fullsize").test(lastClickLink)) {
+				//Proper image display
 				showPopup(e.targetUrl);
 			} else if(e.targetUrl !== 'about:blank') {
 				chrome.browser.openTab({url: e.targetUrl});
