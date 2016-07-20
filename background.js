@@ -87,7 +87,7 @@ chrome.alarms.create("REFRESH_SKYPE_WINDOW", {
 });
 chrome.alarms.onAlarm.addListener(function(alarm) {
 	if(alarm.name === "REFRESH_SKYPE_WINDOW") {
-		refershSkypeWindow();
+		refreshSkypeWindow();
 	}
 });
 
