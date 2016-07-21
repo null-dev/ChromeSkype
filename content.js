@@ -117,6 +117,7 @@ function removeFooterElements() {
 	wholeFooter = document.getElementById("footer");
 	if(wholeFooter !== undefined) {
 		wholeFooter.style["padding-left"] = "0.75em";
+		wholeFooter.style["padding-right"] = "0.75em";
 	}
 	rightFooter = document.querySelector(".legal");
 	if(rightFooter !== undefined) {
