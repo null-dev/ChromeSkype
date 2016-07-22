@@ -8,6 +8,9 @@
 		  #popup {top: 0; right: 0; position: absolute; z-index: 500; opacity: 0; pointer-events: none; width: 100%; height: 100%; transition: all 0.5s; background-color: white;}
 		  #popup_close {font-weight: bold; font-size: 30px; position: absolute; top: -2px; right: 5px; transition: all 0.1s;}
 		  #popup_close:hover {transform: scale(1.2, 1.2); cursor: pointer;}
+		  #loading_overlay {opacity: 1; transition: all 0.5s; top: 0; right: 0; position: absolute; z-index: 400; width: 100%; height: 100%; background-color: white;}
+		  #loading_skype_logo {position: absolute; left: 50%; top: calc(50% - 48px); transform: translate(-50%, -50%); width: 128px; height: 128px;}
+		  #loading_text {opacity: 0.87; position: absolute; left: 8px; width: calc(100% - 16px); text-align: center; top: calc(50% + 32px); font-size: 20px;}
 	  </style>
   </head>
   <body>
@@ -15,6 +18,10 @@
     <div id="popup">
 		<div id="popup_close">X</div>
 		<webview id="pop_webview" class="webview" src="about:blank" style="position: absolute; top: 50px; left: 0; height: calc(100% - 50px)" partition="persist:cskype"></webview>
+    </div>
+    <div id="loading_overlay">
+		<img id="loading_skype_logo" src="icon-128.png" alt="Skype Logo" />
+		<div id="loading_text"><strong>Connecting to Skype's servers...</strong></div>
     </div>
     <script src="window.js"></script>
   </body>

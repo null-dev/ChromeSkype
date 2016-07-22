@@ -80,6 +80,27 @@ function requestNotificationCount() {
 }
 setInterval(requestNotificationCount,3000);
 
+function getLoadingOverlay() {
+	return document.getElementById("loading_overlay");
+}
+
+webview.addEventListener("loadcommit", function() {
+	var loadingOverlay = getLoadingOverlay();
+	if(loadingOverlay.style.opacity > 0 || loadingOverlay.style.opacity === "") {
+		loadingOverlay.style.opacity = 0;
+		loadingOverlay.style["pointer-events"] = "none";
+	}
+});
+webview.addEventListener("loadabort", function() {
+	var loadingOverlay = getLoadingOverlay();
+	loadingOverlay.style.opacity = 1;
+	loadingOverlay.style["pointer-events"] = "all";
+	var loadingImage = document.getElementById("loading_skype_logo");
+	loadingImage.src = "error.png";
+	var loadingText = document.getElementById("loading_text");
+	loadingText.innerHTML = "<strong>Failed to connect to Skype's servers!</strong><br><br>Please make sure you have a reliable internet connection and re-launch ChromeSkype."
+});
+
 var lastClickLink = undefined;
 function clearLastLinkClick() {
 	lastClickLink = undefined;
