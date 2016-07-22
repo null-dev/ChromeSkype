@@ -13,6 +13,7 @@ cp icon-128.png pkg_tmp/
 cp manifest.json pkg_tmp/
 cp window.js pkg_tmp/
 cp content.js pkg_tmp/
+cp error.png pkg_tmp/
 cp -R icon pkg_tmp/
 echo "Zipping files..."
 cd pkg_tmp
