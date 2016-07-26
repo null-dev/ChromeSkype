@@ -16,6 +16,7 @@
     "browser",
     "*://api.skype.com/*",
     "*://web.skype.com/*",
+    "*://avatar.skype.com/*",
     "videoCapture",
     "audioCapture",
     "desktopCapture",

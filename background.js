@@ -106,8 +106,6 @@ var notificationId = "nc";
 //All buttons should be tinted: #BFBFBF
 function notifyFull(notification) {
     var xhr = new XMLHttpRequest();
-    var parsed = new URL(notification.icon);
-    var profileName = parsed.pathname.split('/')[2];
     var notificationId = notification.title;
     var notificationOptions = {
 		type: "basic",
@@ -123,7 +121,7 @@ function notifyFull(notification) {
 		notificationOptions.buttons = [{ title: "Accept Voice Call", iconUrl: "icon/accept-voice.svg"}, { title: "Accept Video Call", iconUrl: "icon/accept-video.svg"}];
 		notificationId = "call_" + notification.title;
 	}
-	xhr.open("GET", "https://api.skype.com/users/" + profileName + "/profile/avatar?returnDefaultImage=true");
+	xhr.open("GET", notification.icon);
 	xhr.responseType = "blob";
 	xhr.onload = function(){
 		var blob = this.response;
@@ -132,7 +130,7 @@ function notifyFull(notification) {
 		chrome.notifications.create(notificationId, notificationOptions);
 	};
 	xhr.onerror = function(){
-		notificationOptions.iconUrl = "icon.png";
+		notificationOptions.iconUrl = "icon/avatar_error.jpg";
 		chrome.notifications.create(notificationId, notificationOptions);
 	};
 	xhr.send(null);
