@@ -12,7 +12,11 @@ window.addEventListener("message", function(event) {
 	} else if(event.data === "REJECT_CALL") {
 		changeCallState("reject");
 	}
-    //Also try to login using Microsoft Account automatically
+	tryMsaSignIn();
+}, false);
+
+function tryMsaSignIn() {
+	//Try to login using Microsoft Account automatically
     var msLink = document.getElementById("signInMSALink");
     if(msLink !== undefined && msLink !== null) {
 		//Don't click on it when it is not visible
@@ -23,7 +27,8 @@ window.addEventListener("message", function(event) {
 			msLink.click();
 		}
 	}
-}, false);
+}
+setTimeout(tryMsaSignIn, 500);
 
 function changeCallState(action) {
 	var possibleButtons = document.getElementsByClassName("btn primary circle");

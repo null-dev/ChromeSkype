@@ -1,7 +1,7 @@
 {
   "name": "ChromeSkype",
   "description": "Native looking Skype on Chrome.",
-  "version": "2.9",
+  "version": "2.91",
   "manifest_version": 2,
   "app": {
     "background": {
