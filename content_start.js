@@ -39,7 +39,7 @@ s.innerHTML = `
 	//Calls only work on Linux and Mac OS X inside this extension (Skype on Windows tries to download their own extension)
 	console.log("[CS] Modifying browser OS to make sure it is not Windows/Mac OS X...");
 	var userAgent = window.navigator.userAgent;
-	userAgent = userAgent.replace( new RegExp("(windows nt|windows|win32|macintosh|mac os x)", 'gi' ), "Mac OS X" );
+	userAgent = userAgent.replace( new RegExp("(windows nt|windows|win32|macintosh|mac os x)", 'gi' ), "Linux" );
 	/** http://stackoverflow.com/a/26888312/5054192 **/
 	function setUserAgent(window, userAgent) {
 		if (window.navigator.userAgent != userAgent) {
